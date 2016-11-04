@@ -13,9 +13,9 @@ local function GetPlayerSong()
 		local sid = alive[1]:SteamID()
 		local available_links = {}
 
-		for url, media in pairs(t) do
+		for _, media in pairs(t) do
 			if media.ttt_opts and media.ttt_opts[sid] then
-				table.insert(available_links, {title = media.title, url = url})
+				table.insert(available_links, {title = media.title, url = media.url})
 			end
 		end
 
@@ -30,15 +30,15 @@ local function GetRoundEndSong(round_result)
 
 	if round_result == WIN_TIMELIMIT then
 		-- Add in innocent-win songs.
-		for url, media in pairs(t) do
+		for _, media in pairs(t) do
 			if media.ttt_opts and (media.ttt_opts[WIN_TIMELIMIT] or media.ttt_opts[WIN_INNOCENT]) then
-				table.insert(possibilities, {title = media.title, url = url})
+				table.insert(possibilities, {title = media.title, url = media.url})
 			end
 		end
 	else
-		for url, media in pairs(t) do
+		for _, media in pairs(t) do
 			if media.ttt_opts and media.ttt_opts[round_result] then
-				table.insert(possibilities, {title = media.title, url = url})
+				table.insert(possibilities, {title = media.title, url = media.url})
 			end
 		end
 	end
@@ -49,20 +49,24 @@ end
 hook.Add("TTTEndRound", "WMCPTTT_PlayRoundEnds", function(result)
 	local media = GetPlayerSong() or GetRoundEndSong(result)
 	if media then
-		wmcp.PlayFor(nil, media.url, media.title, {ttt_sent = true})
+		wmcp.PlayFor(nil, media.url, {
+			meta = {
+				title = media.title
+			}
+		})
 	end
 end)
 
 hook.Add("TTTPrepareRound", "WMCPTTT_StopRoundEnds", function()
-	wmcp.StopFor(nil, {ttt_sent = true})
+	wmcp.StopFor(nil)
 end)
 
 wmcp.AddSecuredConcommand("wmcpttt_setendround", "modify", function(plr, cmd, args, raw)
-	local url = args[1]
+	local id = tonumber(args[1])
 	local round_result = tonumber(args[2])
 	local to_remove = args[3] == "1"
 
-	if not url then
+	if not id then
 		--
 		return
 	end
@@ -73,7 +77,7 @@ wmcp.AddSecuredConcommand("wmcpttt_setendround", "modify", function(plr, cmd, ar
 		return
 	end
 
-	local media = t[url]
+	local media = t[id or -1]
 
 	if not media then
 		--
@@ -98,11 +102,11 @@ wmcp.AddSecuredConcommand("wmcpttt_setendround", "modify", function(plr, cmd, ar
 end)
 
 wmcp.AddSecuredConcommand("wmcpttt_setplayer", "modify", function(plr, cmd, args, raw)
-	local url = args[1]
+	local id = tonumber(args[1])
 	local sid = tostring(args[2])
 	local to_remove = args[3] == "1"
 
-	if not url or not sid then
+	if not id or not sid then
 		--
 		return
 	end
@@ -112,7 +116,7 @@ wmcp.AddSecuredConcommand("wmcpttt_setplayer", "modify", function(plr, cmd, args
 		return
 	end
 
-	local media = t[url]
+	local media = t[id or -1]
 
 	if not media then
 		--
