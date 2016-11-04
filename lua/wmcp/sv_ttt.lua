@@ -57,12 +57,7 @@ hook.Add("TTTPrepareRound", "WMCPTTT_StopRoundEnds", function()
 	wmcp.StopFor(nil, {ttt_sent = true})
 end)
 
-concommand.Add("wmcpttt_setendround", function(plr, cmd, args, raw)
-	if not wmcp.IsAllowed(plr, cmd) then
-		plr:ChatPrint("access denied")
-		return
-	end
-
+wmcp.AddSecuredConcommand("wmcpttt_setendround", "modify", function(plr, cmd, args, raw)
 	local url = args[1]
 	local round_result = tonumber(args[2])
 	local to_remove = args[3] == "1"
@@ -102,12 +97,7 @@ concommand.Add("wmcpttt_setendround", function(plr, cmd, args, raw)
 	wmcp.Persist()
 end)
 
-concommand.Add("wmcpttt_setplayer", function(plr, cmd, args, raw)
-	if not wmcp.IsAllowed(plr, cmd) then
-		plr:ChatPrint("access denied")
-		return
-	end
-
+wmcp.AddSecuredConcommand("wmcpttt_setplayer", "modify", function(plr, cmd, args, raw)
 	local url = args[1]
 	local sid = tostring(args[2])
 	local to_remove = args[3] == "1"
