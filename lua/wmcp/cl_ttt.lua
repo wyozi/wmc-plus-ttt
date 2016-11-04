@@ -22,7 +22,7 @@ hook.Add("TTTSettingsTabs", "WMCPTTT Settings", function(dtabs)
 	dgui:CheckBox("Continue end-round music into the next round", "wmcp_contafterroundend")
 	dsettings:AddItem(dgui)
 
-	--dtabs:AddSheet("Settings", dsettings, "icon16/wrench_orange.png", false, false, "WMC related settings")
+	dtabs:AddSheet("WMCP Settings", dsettings, "icon16/wrench_orange.png", false, false, "WMC related settings")
 end)
 
 hook.Add("WMCPPlayNetMsg", "TTTStuff", function(url, title, opts)
